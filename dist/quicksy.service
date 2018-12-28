@@ -1,0 +1,11 @@
+[Unit]
+Description=Quicksy Server
+
+[Service]
+User=quicksy
+Group=quicksy
+ExecStart=/usr/bin/java -jar /opt/im.quicksy.server-0.1.jar -c /etc/quicksy.json
+ExecReload=/bin/kill -HUP $MAINPID
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,29 @@
+{
+    "domain": "quicksy.im",
+    "twilio_auth_token": "***",
+    "validate_phone_numbers": true,
+    "min_version": "2.3.0",
+    "account_inactivity": "P28D",
+    "xmpp": {
+        "jid": "api.quicksy.im",
+        "secret": "***"
+    },
+    "web": {
+        "host": "127.0.0.1",
+        "port": 4567
+    },
+    "db": {
+        "username": "***",
+        "password": "***",
+        "databases": {
+             "ejabberd": "ejabberd",
+             "quicksy": "quicksy"
+        }
+    },
+    "pay_pal": {
+        "username": "***",
+        "password": "***",
+        "signature": "***"
+    },
+    "cim_auth_token": "***"
+}
