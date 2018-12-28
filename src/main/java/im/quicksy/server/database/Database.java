@@ -43,32 +43,53 @@ public class Database {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Database.class);
 
-    private static final Database INSTANCE = new Database();
+    private static Database INSTANCE;
+
+    private static final Quirks QUIRKS;
+
     private final Sql2o ejabberdDatabase;
     private final Sql2o quicksyDatabase;
 
-    private Database() {
+    static {
         HashMap<Class, Converter> converters = new HashMap<>();
         Adapter.register(converters);
         converters.put(Phonenumber.PhoneNumber.class, new PhoneNumberConverter());
         converters.put(LocalDateTime.class, new LocalDateTimeConverter());
         converters.put(UUID.class, new UUIDStringConverter());
-        Quirks quirks = new NoQuirks(converters);
-        this.ejabberdDatabase = createDatabase("ejabberd", quirks);
-        this.quicksyDatabase = createDatabase("quicksy", quirks);
+        QUIRKS = new NoQuirks(converters);
     }
 
-    private static Sql2o createDatabase(String database, Quirks quirks) {
+    private Database() {
+        this(createDatabase("ejabberd"),createDatabase("quicksy"));
+    }
+
+    public Database(Sql2o ejabberdDatabase, Sql2o quicksyDatabase) {
+        this.ejabberdDatabase = ejabberdDatabase;
+        this.quicksyDatabase = quicksyDatabase;
+        setup(this.quicksyDatabase);
+    }
+
+    private static void setup(Sql2o quicksyDatabase) {
+        try(Connection connection = quicksyDatabase.open()){
+            connection.createQuery("CREATE TABLE IF NOT EXISTS `payments` ( `uuid` char(36) NOT NULL, `owner` varchar(191) DEFAULT NULL, `method` varchar(100) DEFAULT NULL, `token` varchar(255) DEFAULT NULL, `total` float DEFAULT NULL, `status` varchar(100) DEFAULT NULL, `created` timestamp NOT NULL, PRIMARY KEY (`uuid`))").executeUpdate();
+            connection.createQuery("CREATE TABLE IF NOT EXISTS `entries` ( `jid` varchar(191) NOT NULL, `phoneNumber` varchar(25) DEFAULT NULL, `verified` tinyint(1) DEFAULT '0', `attempts` int(11) DEFAULT NULL, PRIMARY KEY (`jid`))").executeUpdate();
+        }
+    }
+
+    private static Sql2o createDatabase(String database) {
         HikariDataSource dataSource = new HikariDataSource();
         Configuration.DB dbConfig = Configuration.getInstance().getDb();
         dataSource.setMaximumPoolSize(dbConfig.getPoolSize());
         dataSource.setJdbcUrl(dbConfig.getJdbcUri(database));
         dataSource.setUsername(dbConfig.getUsername());
         dataSource.setPassword(dbConfig.getPassword());
-        return new Sql2o(dataSource, quirks);
+        return new Sql2o(dataSource, QUIRKS);
     }
 
-    public static Database getInstance() {
+    public static synchronized  Database getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new Database();
+        }
         return INSTANCE;
     }
 
@@ -120,7 +141,7 @@ public class Database {
     }
 
     public boolean updatePaymentAndCreateEntry(Payment payment, Entry entry) {
-        try (Connection connection = this.quicksyDatabase.beginTransaction()) {
+        try (Connection connection = this.quicksyDatabase.beginTransaction(java.sql.Connection.TRANSACTION_SERIALIZABLE)) {
             connection.setRollbackOnException(true);
             connection.createQuery(CREATE_ENTRY).bind(entry).executeUpdate();
             int count = connection.createQuery(MAKE_PAYMENT)
