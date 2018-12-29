@@ -16,6 +16,8 @@
 
 package im.quicksy.server;
 
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import im.quicksy.server.configuration.DatabaseConfiguration;
 import im.quicksy.server.configuration.DatabaseConfigurationBundle;
 import im.quicksy.server.database.Database;
@@ -25,14 +27,18 @@ import im.quicksy.server.pojo.PaymentMethod;
 import org.junit.Test;
 import rocks.xmpp.addr.Jid;
 
-import static junit.framework.TestCase.assertNotNull;
-import static junit.framework.TestCase.assertTrue;
+import java.util.Collections;
+import java.util.List;
+
+import static junit.framework.TestCase.*;
 
 public class DatabaseTest {
 
     private static final String JDBC_URL = "jdbc:sqlite::memory:";
 
     private static final Jid TEST_USER = Jid.of("test@example.com");
+
+    private static final String TEST_PHONE_NUMBER = "+15555222433";
 
     private static final DatabaseConfigurationBundle IN_MEMORY_DATABASE_CONFIGURATION;
 
@@ -58,11 +64,22 @@ public class DatabaseTest {
 
         final Entry entry = database.getEntry(TEST_USER);
         assertNotNull(entry);
+        assertEquals(TEST_USER, entry.getJid());
     }
 
     @Test
-    public void createEntryAddPhoneNumberAndSearch() {
-
+    public void createEntryAddPhoneNumberAndSearch() throws NumberParseException {
+        final Database database = new Database(IN_MEMORY_DATABASE_CONFIGURATION);
+        final Payment payment = new Payment(TEST_USER, PaymentMethod.VOUCHER);
+        payment.setToken("test");
+        database.createPayment(payment);
+        final Entry entry = new Entry(TEST_USER);
+        entry.setPhoneNumber(PhoneNumberUtil.getInstance().parse(TEST_PHONE_NUMBER, "us"));
+        assertTrue(database.updatePaymentAndCreateEntry(payment, entry));
+        assertEquals(0, database.findDirectoryUsers(Collections.singletonList(TEST_PHONE_NUMBER)).size());
+        entry.setVerified(true);
+        database.updateEntry(entry);
+        assertEquals(1, database.findDirectoryUsers(Collections.singletonList(TEST_PHONE_NUMBER)).size());
     }
 
 }
