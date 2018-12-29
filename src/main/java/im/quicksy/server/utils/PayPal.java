@@ -16,7 +16,7 @@
 
 package im.quicksy.server.utils;
 
-import im.quicksy.server.Configuration;
+import im.quicksy.server.configuration.Configuration;
 import im.quicksy.server.pojo.Payment;
 import im.quicksy.server.pojo.ShoppingCartItem;
 

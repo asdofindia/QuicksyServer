@@ -17,7 +17,7 @@
 package im.quicksy.server.utils;
 
 import com.google.common.net.UrlEscapers;
-import im.quicksy.server.Configuration;
+import im.quicksy.server.configuration.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rocks.xmpp.addr.Jid;

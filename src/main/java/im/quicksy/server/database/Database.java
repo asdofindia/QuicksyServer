@@ -19,7 +19,9 @@ package im.quicksy.server.database;
 import com.google.i18n.phonenumbers.Phonenumber;
 import com.zaxxer.hikari.HikariDataSource;
 import de.gultsch.xmpp.addr.adapter.Adapter;
-import im.quicksy.server.Configuration;
+import im.quicksy.server.configuration.Configuration;
+import im.quicksy.server.configuration.DatabaseConfigurationBundle;
+import im.quicksy.server.configuration.DatabaseConfiguration;
 import im.quicksy.server.pojo.Entry;
 import im.quicksy.server.pojo.Payment;
 import im.quicksy.server.pojo.PaymentStatus;
@@ -59,13 +61,9 @@ public class Database {
         QUIRKS = new NoQuirks(converters);
     }
 
-    private Database() {
-        this(createDatabase("ejabberd"),createDatabase("quicksy"));
-    }
-
-    public Database(Sql2o ejabberdDatabase, Sql2o quicksyDatabase) {
-        this.ejabberdDatabase = ejabberdDatabase;
-        this.quicksyDatabase = quicksyDatabase;
+    public Database(DatabaseConfigurationBundle configurationBundle) {
+        this.ejabberdDatabase = createDatabase(configurationBundle.getEjabberdConfiguration());
+        this.quicksyDatabase = createDatabase(configurationBundle.getQuicksyConfiguration());
         setup(this.quicksyDatabase);
     }
 
@@ -76,19 +74,18 @@ public class Database {
         }
     }
 
-    private static Sql2o createDatabase(String database) {
+    private static Sql2o createDatabase(DatabaseConfiguration configuration) {
         HikariDataSource dataSource = new HikariDataSource();
-        Configuration.DB dbConfig = Configuration.getInstance().getDb();
-        dataSource.setMaximumPoolSize(dbConfig.getPoolSize());
-        dataSource.setJdbcUrl(dbConfig.getJdbcUri(database));
-        dataSource.setUsername(dbConfig.getUsername());
-        dataSource.setPassword(dbConfig.getPassword());
+        dataSource.setMaximumPoolSize(configuration.getPoolSize());
+        dataSource.setJdbcUrl(configuration.getJdbcUri());
+        dataSource.setUsername(configuration.getUsername());
+        dataSource.setPassword(configuration.getPassword());
         return new Sql2o(dataSource, QUIRKS);
     }
 
     public static synchronized  Database getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new Database();
+            INSTANCE = new Database(Configuration.getInstance().getDatabaseConfigurationBundle());
         }
         return INSTANCE;
     }
@@ -154,7 +151,6 @@ public class Database {
             }
             connection.commit();
         } catch (Exception e) {
-            e.printStackTrace();
             LOGGER.error(e.getMessage());
             return false;
         }

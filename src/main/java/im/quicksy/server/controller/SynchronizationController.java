@@ -16,7 +16,7 @@
 
 package im.quicksy.server.controller;
 
-import im.quicksy.server.Configuration;
+import im.quicksy.server.configuration.Configuration;
 import im.quicksy.server.database.Database;
 import im.quicksy.server.throttle.Strategy;
 import im.quicksy.server.throttle.VolumeLimiter;

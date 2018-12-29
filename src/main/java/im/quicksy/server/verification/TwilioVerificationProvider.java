@@ -20,7 +20,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.google.i18n.phonenumbers.Phonenumber;
-import im.quicksy.server.Configuration;
+import im.quicksy.server.configuration.Configuration;
 import im.quicksy.server.verification.twilio.ErrorResponse;
 import im.quicksy.server.verification.twilio.GenericResponse;
 import im.quicksy.server.verification.twilio.StartResponse;

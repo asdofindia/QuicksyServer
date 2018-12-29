@@ -16,13 +16,13 @@
 
 package im.quicksy.server;
 
-import com.zaxxer.hikari.HikariDataSource;
+import im.quicksy.server.configuration.DatabaseConfiguration;
+import im.quicksy.server.configuration.DatabaseConfigurationBundle;
 import im.quicksy.server.database.Database;
 import im.quicksy.server.pojo.Entry;
 import im.quicksy.server.pojo.Payment;
 import im.quicksy.server.pojo.PaymentMethod;
 import org.junit.Test;
-import org.sql2o.Sql2o;
 import rocks.xmpp.addr.Jid;
 
 import static junit.framework.TestCase.assertNotNull;
@@ -34,14 +34,23 @@ public class DatabaseTest {
 
     private static final Jid TEST_USER = Jid.of("test@example.com");
 
+    private static final DatabaseConfigurationBundle IN_MEMORY_DATABASE_CONFIGURATION;
+
+    static {
+        IN_MEMORY_DATABASE_CONFIGURATION = new DatabaseConfigurationBundle.Builder()
+                .setEjabberdConfiguration(new DatabaseConfiguration.Builder()
+                        .setUrl(JDBC_URL)
+                        .build())
+                .setQuicksyConfiguration(new DatabaseConfiguration.Builder()
+                        .setUrl(JDBC_URL)
+                        .build())
+                .build();
+    }
+
+
     @Test
     public void makePaymentCreateEntityAndReadBack() {
-        final Sql2o ejabberd = new Sql2o(JDBC_URL, null, null);
-        HikariDataSource dataSource = new HikariDataSource();
-        dataSource.setMaximumPoolSize(1);
-        dataSource.setJdbcUrl(JDBC_URL);
-        final Sql2o quicksy = new Sql2o(dataSource);
-        final Database database = new Database(ejabberd, quicksy);
+        final Database database = new Database(IN_MEMORY_DATABASE_CONFIGURATION);
         final Payment payment = new Payment(TEST_USER, PaymentMethod.VOUCHER);
         payment.setToken("test");
         database.createPayment(payment);
@@ -49,6 +58,11 @@ public class DatabaseTest {
 
         final Entry entry = database.getEntry(TEST_USER);
         assertNotNull(entry);
+    }
+
+    @Test
+    public void createEntryAddPhoneNumberAndSearch() {
+
     }
 
 }

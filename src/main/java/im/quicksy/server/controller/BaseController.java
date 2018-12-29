@@ -20,7 +20,7 @@ import com.github.zafarkhaja.semver.ParseException;
 import com.github.zafarkhaja.semver.Version;
 import com.google.common.base.Splitter;
 import com.google.common.net.InetAddresses;
-import im.quicksy.server.Configuration;
+import im.quicksy.server.configuration.Configuration;
 import im.quicksy.server.verification.TwilioVerificationProvider;
 import im.quicksy.server.verification.VerificationProvider;
 import org.slf4j.Logger;

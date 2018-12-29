@@ -19,7 +19,7 @@ package im.quicksy.server.controller;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
-import im.quicksy.server.Configuration;
+import im.quicksy.server.configuration.Configuration;
 import im.quicksy.server.Utils;
 import im.quicksy.server.ejabberd.MyEjabberdApi;
 import im.quicksy.server.pojo.Device;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.quicksy.server;
+package im.quicksy.server.configuration;
 
 
 import com.github.zafarkhaja.semver.Version;
@@ -41,7 +41,7 @@ public class Configuration {
 
     private XMPP xmpp = new XMPP();
     private Web web = new Web();
-    private DB db = new DB();
+    private HashMap<String, DatabaseConfiguration> db;
     private PayPal payPal = new PayPal();
     private String twilioAuthToken;
     private String cimAuthToken;
@@ -50,6 +50,7 @@ public class Configuration {
     private String domain;
     private boolean validatePhoneNumbers = true;
     private boolean preventRegistration = true;
+
     private Configuration() {
 
     }
@@ -102,7 +103,7 @@ public class Configuration {
     }
 
     public boolean check() {
-        return domain != null && minVersion != null && web != null && xmpp != null && xmpp.check() && db != null && db.check() && payPal != null && payPal.check();
+        return domain != null && minVersion != null && web != null && xmpp != null && xmpp.check() && db != null && db.size() == 2 && payPal != null && payPal.check();
     }
 
     public Duration getAccountInactivity() {
@@ -125,8 +126,8 @@ public class Configuration {
         return web;
     }
 
-    public DB getDb() {
-        return db;
+    public DatabaseConfigurationBundle getDatabaseConfigurationBundle() {
+        return new DatabaseConfigurationBundle.Builder().setEjabberdConfiguration(db.get("ejabberd")).setQuicksyConfiguration(db.get("quicksy")).build();
     }
 
     public String getTwilioAuthToken() {
@@ -190,44 +191,6 @@ public class Configuration {
 
         public int getPort() {
             return port;
-        }
-    }
-
-    public static class DB {
-        private String host = "127.0.0.1";
-        private int port = 3306;
-        private String username;
-        private String password;
-        private HashMap<String, String> databases;
-        private int poolSize = 1;
-
-        public String getHost() {
-            return host;
-        }
-
-        public int getPort() {
-            return port;
-        }
-
-        public String getUsername() {
-            return username;
-        }
-
-        public String getPassword() {
-            return password;
-        }
-
-        public String getJdbcUri(String database) {
-
-            return String.format("jdbc:mariadb://%s:%d/%s?characterEncoding=utf8", host, port, databases.get(database));
-        }
-
-        public boolean check() {
-            return username != null && password != null && databases != null && databases.containsKey("ejabberd") && databases.containsKey("quicksy");
-        }
-
-        public int getPoolSize() {
-            return poolSize;
         }
     }
 

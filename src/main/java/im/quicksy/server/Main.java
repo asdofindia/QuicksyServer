@@ -16,6 +16,7 @@
 
 package im.quicksy.server;
 
+import im.quicksy.server.configuration.Configuration;
 import im.quicksy.server.controller.*;
 import im.quicksy.server.xmpp.synchronization.Entry;
 import im.quicksy.server.xmpp.synchronization.PhoneBook;

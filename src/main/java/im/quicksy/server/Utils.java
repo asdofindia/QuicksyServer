@@ -18,6 +18,7 @@ package im.quicksy.server;
 
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
+import im.quicksy.server.configuration.Configuration;
 import rocks.xmpp.addr.Jid;
 
 public class Utils {

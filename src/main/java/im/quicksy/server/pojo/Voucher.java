@@ -19,15 +19,13 @@ package im.quicksy.server.pojo;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import im.quicksy.server.Configuration;
-import im.quicksy.server.controller.BaseController;
+import im.quicksy.server.configuration.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.FileReader;
 import java.time.Instant;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 public class Voucher {

@@ -13,11 +13,13 @@
         "port": 4567
     },
     "db": {
-        "username": "***",
-        "password": "***",
-        "databases": {
-             "ejabberd": "ejabberd",
-             "quicksy": "quicksy"
+        "ejabberd" : {
+            "url": "jdbc:mariadb://localhost:3306/ejabberd?characterEncoding=utf8"
+            "username": "***",
+            "password": "***"
+        },
+        "quicksy" : {
+            "url": "jdbc:mariadb://localhost:3306/quicksy?characterEncoding=utf8"
         }
     },
     "pay_pal": {

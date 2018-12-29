@@ -21,7 +21,7 @@ import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
 import de.gultsch.ejabberd.api.RequestFailedException;
-import im.quicksy.server.Configuration;
+import im.quicksy.server.configuration.Configuration;
 import im.quicksy.server.database.Database;
 import im.quicksy.server.ejabberd.MyEjabberdApi;
 import im.quicksy.server.pojo.Entry;
@@ -36,7 +36,6 @@ import im.quicksy.server.verification.VerificationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rocks.xmpp.addr.Jid;
-import rocks.xmpp.extensions.hashes.model.Hash;
 import spark.*;
 
 import java.util.HashMap;
