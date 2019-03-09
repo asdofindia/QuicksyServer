@@ -3,3 +3,4 @@
 * XEPify look up method
 * Give verified users access to query the directory (Probably configurable via config flag)
 * send IQ ping when 'already on another device' error occurs
+* additionally look up XMPP uris in enum domains / DNS
