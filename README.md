@@ -43,6 +43,7 @@ The password will be transmitted in the body of the POST. Phone number and 6 dig
 #### Response codes
 
 * `200`: Account has been created or password has been changed
+* `400`: Returned when supplied data (including headers) is invalid or not existend. Displays to user as: **Invalid user input**.
 * `401`: Incorrect pin code. Displayed to user as: **The pin you have entered is incorrect.**
 * `403`: Outdated app version (as reported by *User-Agent*). Displays to user as: **You are using an out of date version of this app.**
 * `404`: Unable to find pin code for phone number (probably because it has been expired.). Displayed to user as: **The pin we have sent you has expired.**
