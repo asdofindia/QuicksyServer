@@ -37,12 +37,13 @@ The password will be transmitted in the body of the POST. Phone number and 6 dig
 
 #### Request Header
 
-* `Authorization`: HTTP Basic auth with username = phone number as E.164 string and password = 6 digit pin.
+* `Authorization`: E.164 formatted phone number and 6 digit PIN concatenated with null byte as delimiter and encoded with base64. `base64(phoneNumber + \0 + pin)`.
 * `User-Agent`: Formatted to `Name/Version` with version being formatted according to [Sementic Versioning](https://semver.org/).
 
 #### Response codes
 
-* `200`: Account has been created or password has been changed
+* `200`: Password for an existing account has been changed.
+* `201`: A new account with the password has been created
 * `400`: Returned when supplied data (including headers) is invalid or not existend. Displays to user as: **Invalid user input**.
 * `401`: Incorrect pin code. Displayed to user as: **The pin you have entered is incorrect.**
 * `403`: Outdated app version (as reported by *User-Agent*). Displays to user as: **You are using an out of date version of this app.**
