@@ -95,6 +95,7 @@ public class PasswordController extends BaseController {
                             LOGGER.info("delete old and create new user " + jid);
                             MyEjabberdApi.getInstance().unregister(jid.getEscapedLocal(), jid.getDomain());
                             MyEjabberdApi.getInstance().register(jid.getEscapedLocal(), jid.getDomain(), password);
+                            response.status(201);
                         } else {
                             LOGGER.info("changing password for existing user " + jid);
                             MyEjabberdApi.getInstance().changePassword(jid.getEscapedLocal(), jid.getDomain(), password);
@@ -102,6 +103,7 @@ public class PasswordController extends BaseController {
                     } else {
                         LOGGER.info("create new user " + jid);
                         MyEjabberdApi.getInstance().register(jid.getEscapedLocal(), jid.getDomain(), password);
+                        response.status(201);
                     }
                     return "";
                 } else {

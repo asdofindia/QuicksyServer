@@ -16,7 +16,7 @@
 
 package im.quicksy.server.database;
 
-public class SqlQuery {
+public final class SqlQuery {
 
     static final String FIND_EXISTING_USERS = "select username from users where server_host=:host and username in(:users)";
     static final String FIND_DICTIONARY_ENTRIES = "select jid,phoneNumber from entries where phoneNumber in(:phoneNumbers) and verified=1";
