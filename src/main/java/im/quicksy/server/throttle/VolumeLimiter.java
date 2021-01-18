@@ -39,7 +39,7 @@ public class VolumeLimiter<E, T> {
         }
 
         if (whats.size() > strategy.getAttempts()) {
-            throw new RetryInException(Duration.ZERO);
+            throw new RetryInException(Duration.ZERO); //TODO should we throw a too large exception. because retry doesn’t really make sense
         }
 
         List<T> remaining = new ArrayList<>(whats);

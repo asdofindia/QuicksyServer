@@ -1,3 +1,5 @@
+* Create Adhoc-Commands method to look up single phone number
+* Allow users in the directory to loop up others
 * Allow multiple entries (phone numbers) per Jabber ID
 * Generalize look up method and allow email addresses (and potentially all sort of uris) to be stored in the directory
 * XEPify look up method
