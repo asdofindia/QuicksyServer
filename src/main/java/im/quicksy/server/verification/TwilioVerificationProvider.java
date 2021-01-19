@@ -141,8 +141,12 @@ public class TwilioVerificationProvider implements VerificationProvider {
                 return gson.fromJson(result, clazz);
             } else {
                 LOGGER.debug("json was " + result);
-                ErrorResponse error = gson.fromJson(result, ErrorResponse.class);
-                throw new RequestFailedException(error.getMessage(), error.getErrorCode());
+                final ErrorResponse error = gson.fromJson(result, ErrorResponse.class);
+                if (error.getErrorCode() == PHONE_VERIFICATION_NOT_FOUND) {
+                    throw new TokenExpiredException(error.getMessage(), error.getErrorCode());
+                } else {
+                    throw new RequestFailedException(error.getMessage(), error.getErrorCode());
+                }
             }
         } catch (JsonSyntaxException e) {
             final String firstLine = result == null ? "" : result.split("\n")[0];

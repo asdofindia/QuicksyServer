@@ -20,6 +20,8 @@ import com.google.i18n.phonenumbers.Phonenumber;
 
 public interface VerificationProvider {
 
+    int VERIFICATION_CODE_LENGTH = 6;
+
     boolean verify(Phonenumber.PhoneNumber phoneNumber, String pin) throws RequestFailedException;
 
     void request(Phonenumber.PhoneNumber phoneNumber, Method method) throws RequestFailedException;

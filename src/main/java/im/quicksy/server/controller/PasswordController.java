@@ -28,6 +28,7 @@ import im.quicksy.server.ejabberd.MyEjabberdApi;
 import im.quicksy.server.throttle.RateLimiter;
 import im.quicksy.server.throttle.Strategy;
 import im.quicksy.server.verification.RequestFailedException;
+import im.quicksy.server.verification.TokenExpiredException;
 import im.quicksy.server.verification.TwilioVerificationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,7 +91,7 @@ public class PasswordController extends BaseController {
                     if (MyEjabberdApi.getInstance().checkAccount(jid.getEscapedLocal(), jid.getDomain())) {
                         final Last last = MyEjabberdApi.getInstance().getLast(jid.getEscapedLocal(), jid.getDomain());
                         final Duration lastActivity = Duration.between(last.getTimestamp(), Instant.now());
-                        LOGGER.info("user "+jid.getEscapedLocal()+" was last active "+lastActivity+" ago.");
+                        LOGGER.info("user " + jid.getEscapedLocal() + " was last active " + lastActivity + " ago.");
                         if (Configuration.getInstance().getAccountInactivity().minus(lastActivity).isNegative()) {
                             LOGGER.info("delete old and create new user " + jid);
                             MyEjabberdApi.getInstance().unregister(jid.getEscapedLocal(), jid.getDomain());
@@ -110,13 +111,12 @@ public class PasswordController extends BaseController {
                     System.out.println("verification provider reported failed");
                     return halt(401);
                 }
+            } catch (TokenExpiredException e) {
+                LOGGER.warn("Contacting verification provider failed with: " + e.getMessage());
+                return halt(404);
             } catch (RequestFailedException e) {
-                if (e.getCode() == TwilioVerificationProvider.PHONE_VERIFICATION_NOT_FOUND) {
-                    return halt(404);
-                } else {
-                    LOGGER.warn("Contacting verification provider failed with: " + e.getMessage());
-                    return halt(500);
-                }
+                LOGGER.warn("Contacting verification provider failed with: " + e.getMessage());
+                return halt(500);
             } catch (de.gultsch.ejabberd.api.RequestFailedException e) {
                 LOGGER.warn("Contacting ejabberd failed with: " + e.getMessage());
                 return halt(500);

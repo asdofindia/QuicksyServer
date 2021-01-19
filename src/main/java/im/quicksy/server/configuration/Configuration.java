@@ -44,6 +44,9 @@ public class Configuration {
     private HashMap<String, DatabaseConfiguration> db;
     private PayPal payPal = new PayPal();
     private String twilioAuthToken;
+
+    private String nexmoApiKey;
+    private String nexmoApiSecret;
     private String cimAuthToken;
     private Version minVersion;
     private Duration accountInactivity = Duration.ofDays(28);
@@ -132,6 +135,14 @@ public class Configuration {
 
     public String getTwilioAuthToken() {
         return twilioAuthToken;
+    }
+
+    public String getNexmoApiKey() {
+        return nexmoApiKey;
+    }
+
+    public String getNexmoApiSecret() {
+        return nexmoApiSecret;
     }
 
     public Optional<String> getCimAuthToken() {

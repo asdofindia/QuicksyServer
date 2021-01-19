@@ -31,6 +31,7 @@ import im.quicksy.server.pojo.Voucher;
 import im.quicksy.server.utils.CimUtils;
 import im.quicksy.server.utils.CodeGenerator;
 import im.quicksy.server.utils.PayPal;
+import im.quicksy.server.verification.NexmoVerificationProvider;
 import im.quicksy.server.verification.TwilioVerificationProvider;
 import im.quicksy.server.verification.VerificationProvider;
 import org.slf4j.Logger;
@@ -43,6 +44,8 @@ import java.util.HashMap;
 public class EnterController extends BaseController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EnterController.class);
+
+    private static final VerificationProvider VERIFICATION_PROVIDER = new TwilioVerificationProvider();
 
     public static TemplateViewRoute intro = (request, response) -> {
         HashMap<String, Object> model = new HashMap<>();
