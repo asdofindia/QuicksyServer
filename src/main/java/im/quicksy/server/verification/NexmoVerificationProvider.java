@@ -10,13 +10,13 @@ import com.google.i18n.phonenumbers.Phonenumber;
 import im.quicksy.server.configuration.Configuration;
 import im.quicksy.server.verification.nexmo.GenericResponse;
 import okhttp3.*;
-import okhttp3.logging.HttpLoggingInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.List;
 
 public class NexmoVerificationProvider implements VerificationProvider {
@@ -33,6 +33,10 @@ public class NexmoVerificationProvider implements VerificationProvider {
 
     private static final String BRAND_NAME = "Quicksy.im";
     private static final String MESSAGE = "Your Quicksy code is: %s\n\nDon't share this code with others.\n\nOYITl6r6eIp";
+
+    private static final List<Integer> COUNTRY_CODES_SUPPORTING_ALPHA_NUMERIC = Arrays.asList(
+            49
+    );
 
     private static final int MAX_ATTEMPTS = 3;
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
@@ -59,10 +63,17 @@ public class NexmoVerificationProvider implements VerificationProvider {
         PIN_CACHE.put(phoneNumber, pin);
         System.out.println("pin: " + pin);
         final String to = String.format("%d%d", phoneNumber.getCountryCode(), phoneNumber.getNationalNumber());
+        final String nexmoPhoneNumber = Configuration.getInstance().getNexmoPhoneNumber();
+        final String from;
+        if (Strings.isNullOrEmpty(nexmoPhoneNumber) || COUNTRY_CODES_SUPPORTING_ALPHA_NUMERIC.contains(phoneNumber.getCountryCode())) {
+            from = BRAND_NAME;
+        } else {
+            from = nexmoPhoneNumber;
+        }
         LOGGER.info("requesting SMS through nexmo for {}", to);
         final Call call = OK_HTTP_CLIENT.newCall(new Request.Builder()
                 .post(new FormBody.Builder()
-                        .add("from", BRAND_NAME)
+                        .add("from", from)
                         .add("text", String.format(MESSAGE, pin.toString()))
                         .add("to", to)
                         .add("api_key", Configuration.getInstance().getNexmoApiKey())
@@ -87,7 +98,7 @@ public class NexmoVerificationProvider implements VerificationProvider {
                     final GenericResponse.Message message = messages.get(0);
                     final String status = message.getStatus();
                     if (!"0".equals(status)) {
-                        LOGGER.error("Unable to requests SMS. Status={} text={}",message.getStatus(), message.getErrorText());
+                        LOGGER.error("Unable to requests SMS. Status={} text={}", message.getStatus(), message.getErrorText());
                         throw new RequestFailedException(message.getErrorText());
                     }
                 } else {

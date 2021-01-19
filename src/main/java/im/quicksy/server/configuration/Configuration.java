@@ -46,6 +46,8 @@ public class Configuration {
     private String twilioAuthToken;
 
     private String nexmoApiKey;
+    private String nexmoPhoneNumber;
+
     private String nexmoApiSecret;
     private String cimAuthToken;
     private Version minVersion;
@@ -143,6 +145,10 @@ public class Configuration {
 
     public String getNexmoApiSecret() {
         return nexmoApiSecret;
+    }
+
+    public String getNexmoPhoneNumber() {
+        return nexmoPhoneNumber;
     }
 
     public Optional<String> getCimAuthToken() {
