@@ -61,7 +61,6 @@ public class NexmoVerificationProvider implements VerificationProvider {
     public void request(Phonenumber.PhoneNumber phoneNumber, Method method) throws RequestFailedException {
         final Pin pin = Pin.generate();
         PIN_CACHE.put(phoneNumber, pin);
-        System.out.println("pin: " + pin);
         final String to = String.format("%d%d", phoneNumber.getCountryCode(), phoneNumber.getNationalNumber());
         final String nexmoPhoneNumber = Configuration.getInstance().getNexmoPhoneNumber();
         final String from;
