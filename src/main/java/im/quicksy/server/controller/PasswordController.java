@@ -80,7 +80,7 @@ public class PasswordController extends BaseController {
                 return halt(400, "Unable to parse phone number");
             }
 
-            Jid jid = Utils.jidOf(phonenumber);
+            final Jid jid = Utils.jidOf(phonenumber);
 
             if (Configuration.getInstance().isPreventRegistration() && MyEjabberdApi.getInstance().getUserResources(jid.getEscapedLocal(), jid.getDomain()).size() > 0) {
                 return halt(409);

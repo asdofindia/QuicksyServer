@@ -48,11 +48,19 @@ public class NexmoVerificationProvider implements VerificationProvider {
     public boolean verify(Phonenumber.PhoneNumber phoneNumber, String input) throws RequestFailedException {
         final Pin pin = PIN_CACHE.getIfPresent(phoneNumber);
         if (pin == null) {
+            LOGGER.warn("The pin for {} has expired", phoneNumber);
             throw new TokenExpiredException("No pin found for this phone number");
         }
         try {
-            return pin.verify(input);
-        } catch (TooManyAttemptsException e) {
+            final boolean verified = pin.verify(input);
+            if (verified) {
+                LOGGER.info("Pin for {} has been verified successfully", phoneNumber);
+            } else {
+                LOGGER.warn("Pin for {} was incorrect", phoneNumber);
+            }
+            return verified;
+        } catch (final TooManyAttemptsException e) {
+            LOGGER.warn("Unable to verify pin for {}. Too many attempts", phoneNumber);
             throw new TokenExpiredException(e);
         }
     }
@@ -69,7 +77,7 @@ public class NexmoVerificationProvider implements VerificationProvider {
         } else {
             from = nexmoPhoneNumber;
         }
-        LOGGER.info("requesting SMS through nexmo for {}", to);
+        LOGGER.info("requesting SMS through nexmo for {}", phoneNumber);
         final Call call = OK_HTTP_CLIENT.newCall(new Request.Builder()
                 .post(new FormBody.Builder()
                         .add("from", from)
@@ -104,8 +112,7 @@ public class NexmoVerificationProvider implements VerificationProvider {
                     throw new RequestFailedException("Invalid number of result messages");
                 }
             }
-            LOGGER.info("call was successful");
-        } catch (IOException e) {
+        } catch (final IOException e) {
             LOGGER.warn("failed to request SMS verification", e);
             throw new RequestFailedException(e);
         }
