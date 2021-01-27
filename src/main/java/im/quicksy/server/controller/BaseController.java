@@ -21,6 +21,7 @@ import com.github.zafarkhaja.semver.Version;
 import com.google.common.base.Splitter;
 import com.google.common.net.InetAddresses;
 import im.quicksy.server.configuration.Configuration;
+import im.quicksy.server.verification.MetaVerificationProvider;
 import im.quicksy.server.verification.NexmoVerificationProvider;
 import im.quicksy.server.verification.TwilioVerificationProvider;
 import im.quicksy.server.verification.VerificationProvider;
@@ -52,7 +53,7 @@ public class BaseController {
     protected static Pattern PIN_PATTERN = Pattern.compile("^[0-9]{6}$");
     protected static Pattern UUID_PATTERN = Pattern.compile("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$");
 
-    protected static final VerificationProvider VERIFICATION_PROVIDER = new NexmoVerificationProvider();
+    protected static final VerificationProvider VERIFICATION_PROVIDER = new MetaVerificationProvider();
 
     protected static InetAddress getClientIp(Request request) {
         final InetAddress remote = InetAddresses.forString(request.ip());

@@ -20,9 +20,15 @@ import com.google.i18n.phonenumbers.Phonenumber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MockVerificationProvider implements VerificationProvider {
+import java.util.Map;
+
+public class MockVerificationProvider extends AbstractVerificationProvider {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MockVerificationProvider.class);
+
+    public MockVerificationProvider(Map<String, String> parameter) {
+        super(parameter);
+    }
 
     @Override
     public boolean verify(Phonenumber.PhoneNumber phoneNumber, String pin) {

@@ -1,5 +1,6 @@
 package im.quicksy.server.verification;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -18,8 +19,9 @@ import java.security.SecureRandom;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
-public class NexmoVerificationProvider implements VerificationProvider {
+public class NexmoVerificationProvider extends AbstractVerificationProvider {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NexmoVerificationProvider.class);
 
@@ -43,6 +45,17 @@ public class NexmoVerificationProvider implements VerificationProvider {
     private final Cache<Phonenumber.PhoneNumber, Pin> PIN_CACHE = CacheBuilder.newBuilder()
             .expireAfterWrite(Duration.ofMinutes(5))
             .build();
+
+    private final String phoneNumber;
+    private final String apiKey;
+    private final String apiSecret;
+
+    public NexmoVerificationProvider(Map<String, String> parameter) {
+        super(parameter);
+        this.phoneNumber = parameter.get("phone_number");
+        this.apiKey = Preconditions.checkNotNull(parameter.get("api_key"));
+        this.apiSecret = Preconditions.checkNotNull(parameter.get("api_secret"));
+    }
 
     @Override
     public boolean verify(Phonenumber.PhoneNumber phoneNumber, String input) throws RequestFailedException {
@@ -70,7 +83,7 @@ public class NexmoVerificationProvider implements VerificationProvider {
         final Pin pin = Pin.generate();
         PIN_CACHE.put(phoneNumber, pin);
         final String to = String.format("%d%d", phoneNumber.getCountryCode(), phoneNumber.getNationalNumber());
-        final String nexmoPhoneNumber = Configuration.getInstance().getNexmoPhoneNumber();
+        final String nexmoPhoneNumber = this.phoneNumber;
         final String from;
         if (Strings.isNullOrEmpty(nexmoPhoneNumber) || COUNTRY_CODES_SUPPORTING_ALPHA_NUMERIC.contains(phoneNumber.getCountryCode())) {
             from = BRAND_NAME;
@@ -83,8 +96,8 @@ public class NexmoVerificationProvider implements VerificationProvider {
                         .add("from", from)
                         .add("text", String.format(MESSAGE, pin.toString()))
                         .add("to", to)
-                        .add("api_key", Configuration.getInstance().getNexmoApiKey())
-                        .add("api_secret", Configuration.getInstance().getNexmoApiSecret())
+                        .add("api_key", this.apiKey)
+                        .add("api_secret", this.apiSecret)
                         .build())
                 .url(NEXMO_API_URL)
                 .build());

@@ -31,8 +31,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.time.Duration;
-import java.util.HashMap;
-import java.util.Optional;
+import java.util.*;
 
 public class Configuration {
 
@@ -43,12 +42,9 @@ public class Configuration {
     private Web web = new Web();
     private HashMap<String, DatabaseConfiguration> db;
     private PayPal payPal = new PayPal();
-    private String twilioAuthToken;
 
-    private String nexmoApiKey;
-    private String nexmoPhoneNumber;
+    private TreeMap<String, ProviderConfiguration> provider;
 
-    private String nexmoApiSecret;
     private String cimAuthToken;
     private Version minVersion;
     private Duration accountInactivity = Duration.ofDays(28);
@@ -135,22 +131,6 @@ public class Configuration {
         return new DatabaseConfigurationBundle.Builder().setEjabberdConfiguration(db.get("ejabberd")).setQuicksyConfiguration(db.get("quicksy")).build();
     }
 
-    public String getTwilioAuthToken() {
-        return twilioAuthToken;
-    }
-
-    public String getNexmoApiKey() {
-        return nexmoApiKey;
-    }
-
-    public String getNexmoApiSecret() {
-        return nexmoApiSecret;
-    }
-
-    public String getNexmoPhoneNumber() {
-        return nexmoPhoneNumber;
-    }
-
     public Optional<String> getCimAuthToken() {
         return Optional.ofNullable(cimAuthToken);
     }
@@ -169,6 +149,10 @@ public class Configuration {
 
     public Version getMinVersion() {
         return minVersion;
+    }
+
+    public TreeMap<String, Configuration.ProviderConfiguration> getProvider() {
+        return this.provider;
     }
 
     public static class XMPP {
@@ -230,6 +214,20 @@ public class Configuration {
 
         public boolean check() {
             return username != null && password != null && signature != null;
+        }
+    }
+
+
+    public static class ProviderConfiguration {
+        private Map<String, String> parameter;
+        private List<Integer> deny;
+
+        public Map<String, String> getParameter() {
+            return parameter;
+        }
+
+        public List<Integer> getDeny() {
+            return deny;
         }
     }
 }

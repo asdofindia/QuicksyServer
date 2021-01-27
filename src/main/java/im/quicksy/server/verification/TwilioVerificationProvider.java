@@ -16,6 +16,7 @@
 
 package im.quicksy.server.verification;
 
+import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
@@ -34,12 +35,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
-public class TwilioVerificationProvider implements VerificationProvider {
+public class TwilioVerificationProvider extends AbstractVerificationProvider {
 
 
     public static final int PHONE_VERIFICATION_INCORRECT = 60022;
@@ -50,6 +49,23 @@ public class TwilioVerificationProvider implements VerificationProvider {
     private static final String TWILIO_API_URL = "https://api.authy.com/protected/json/phones/verification/";
     private static final Logger LOGGER = LoggerFactory.getLogger(TwilioVerificationProvider.class);
     private final GsonBuilder gsonBuilder = new GsonBuilder();
+
+    private final String authToken;
+
+    public TwilioVerificationProvider(Map<String, String> parameter) {
+        super(parameter);
+        this.authToken = Preconditions.checkNotNull(parameter.get("auth_token"));
+    }
+
+    public TwilioVerificationProvider() {
+        super(Collections.emptyMap());
+        final TreeMap<String, Configuration.ProviderConfiguration> provider = Configuration.getInstance().getProvider();
+        final Configuration.ProviderConfiguration myConfiguration = provider.get(getClass().getName());
+        if (myConfiguration == null) {
+            throw new RuntimeException("No configuration found for "+getClass().getSimpleName());
+        }
+        this.authToken = Preconditions.checkNotNull(myConfiguration.getParameter().get("auth_token"));
+    }
 
     @Override
     public boolean verify(Phonenumber.PhoneNumber phoneNumber, String pin) throws RequestFailedException {
@@ -124,7 +140,7 @@ public class TwilioVerificationProvider implements VerificationProvider {
         try {
             final Gson gson = this.gsonBuilder.create();
             final HttpURLConnection connection = (HttpURLConnection) new URL(TWILIO_API_URL + method).openConnection();
-            connection.setRequestProperty("X-Authy-API-Key", Configuration.getInstance().getTwilioAuthToken());
+            connection.setRequestProperty("X-Authy-API-Key", this.authToken);
             if (params != null && params.size() > 0) {
                 connection.setRequestMethod("POST");
                 final String output = getQuery(params);
