@@ -227,7 +227,7 @@ public class Configuration {
         }
 
         public List<Integer> getDeny() {
-            return deny;
+            return deny == null ? Collections.emptyList() : deny;
         }
     }
 }

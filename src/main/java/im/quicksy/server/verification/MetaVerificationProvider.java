@@ -85,8 +85,8 @@ public class MetaVerificationProvider implements VerificationProvider {
         private final AbstractVerificationProvider provider;
 
         private ProviderWrapper(List<Integer> deny, AbstractVerificationProvider provider) {
-            this.deny = deny;
-            this.provider = provider;
+            this.deny = Preconditions.checkNotNull(deny);
+            this.provider = Preconditions.checkNotNull(provider);
         }
     }
 }

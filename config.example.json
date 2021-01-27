@@ -1,0 +1,50 @@
+{
+  "domain": "quicksy.im",
+  "validate_phone_numbers": true,
+  "prevent_registration": false,
+  "min_version": "2.3.0",
+  "account_inactivity": "P28D",
+  "xmpp": {
+    "jid": "api.quicksy.im",
+    "secret": "…"
+  },
+  "web": {
+    "host": "127.0.0.1",
+    "port": 4567
+  },
+  "db": {
+    "ejabberd": {
+      "url": "jdbc:mariadb://localhost:3306/ejabberd?characterEncoding=utf8",
+      "username": "…",
+      "password": "…"
+    },
+    "quicksy": {
+      "url": "jdbc:mariadb://localhost:3306/quicksy?characterEncoding=utf8",
+      "username": "…",
+      "password": "…"
+    }
+  },
+  "provider": {
+    "im.quicksy.server.verification.NexmoVerificationProvider": {
+      "deny": [
+        91
+      ],
+      "parameter": {
+        "api_key": "…",
+        "api_secret": "…",
+        "phone_number": "…"
+      }
+    },
+    "im.quicksy.server.verification.TwilioVerificationProvider": {
+      "parameter": {
+        "auth_token": "…"
+      }
+    }
+  },
+  "pay_pal": {
+    "username": "…",
+    "password": "…",
+    "signature": "…"
+  },
+  "cim_auth_token": "…"
+}
