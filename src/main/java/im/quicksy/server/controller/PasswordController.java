@@ -108,7 +108,7 @@ public class PasswordController extends BaseController {
                     }
                     return "";
                 } else {
-                    System.out.println("verification provider reported failed");
+                    LOGGER.info("verification provider reported wrong pin");
                     return halt(401);
                 }
             } catch (TokenExpiredException e) {

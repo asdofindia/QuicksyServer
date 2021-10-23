@@ -24,6 +24,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import de.gultsch.xmpp.addr.adapter.Adapter;
 import im.quicksy.server.json.DurationDeserializer;
+import im.quicksy.server.json.PatternDeserializer;
 import im.quicksy.server.json.VersionDeserializer;
 import rocks.xmpp.addr.Jid;
 
@@ -32,6 +33,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.time.Duration;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class Configuration {
 
@@ -79,6 +81,7 @@ public class Configuration {
         Adapter.register(gsonBuilder);
         gsonBuilder.registerTypeAdapter(Version.class, new VersionDeserializer());
         gsonBuilder.registerTypeAdapter(Duration.class, new DurationDeserializer());
+        gsonBuilder.registerTypeAdapter(Pattern.class, new PatternDeserializer());
         final Gson gson = gsonBuilder.create();
         try {
             System.out.println("Reading configuration from " + FILE.getAbsolutePath());
@@ -221,6 +224,7 @@ public class Configuration {
     public static class ProviderConfiguration {
         private Map<String, String> parameter;
         private List<Integer> deny;
+        private Pattern pattern;
 
         public Map<String, String> getParameter() {
             return parameter;
@@ -228,6 +232,10 @@ public class Configuration {
 
         public List<Integer> getDeny() {
             return deny == null ? Collections.emptyList() : deny;
+        }
+
+        public Pattern getPattern() {
+            return this.pattern;
         }
     }
 }

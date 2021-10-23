@@ -2,6 +2,7 @@ package im.quicksy.server.verification;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
 import im.quicksy.server.configuration.Configuration;
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.regex.Pattern;
 
 public class MetaVerificationProvider implements VerificationProvider {
 
@@ -43,7 +45,7 @@ public class MetaVerificationProvider implements VerificationProvider {
                 LOGGER.warn("Unable to construct VerificationProvider",e);
                 continue;
             }
-            providerListBuilder.add(new ProviderWrapper(configuration.getDeny(), providerInstance));
+            providerListBuilder.add(new ProviderWrapper(configuration.getDeny(), configuration.getPattern(), providerInstance));
             LOGGER.info("found provider {} ", className);
         }
         final ImmutableList<ProviderWrapper> providerList = providerListBuilder.build();
@@ -71,22 +73,29 @@ public class MetaVerificationProvider implements VerificationProvider {
 
     private AbstractVerificationProvider getVerificationProvider(Phonenumber.PhoneNumber phoneNumber) throws RequestFailedException {
         final int countryCode = phoneNumber.getCountryCode();
-        for(ProviderWrapper providerWrapper : this.providerList) {
-            if (providerWrapper.deny.contains(countryCode)) {
+        final String e164 = PhoneNumberUtil.getInstance().format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.E164);
+        for(final ProviderWrapper providerWrapper : this.providerList) {
+            if (providerWrapper.reject(e164) || providerWrapper.deny.contains(countryCode)) {
                 continue;
             }
             return providerWrapper.provider;
         }
-        throw new RequestFailedException(String.format("No Verification Provider found to handle country code %d", countryCode));
+        throw new RequestFailedException(String.format("No Verification Provider found to handle phone number %s", e164));
     }
 
     private static class ProviderWrapper {
         private final List<Integer> deny;
+        private final Pattern pattern;
         private final AbstractVerificationProvider provider;
 
-        private ProviderWrapper(List<Integer> deny, AbstractVerificationProvider provider) {
+        private ProviderWrapper(List<Integer> deny, Pattern pattern, AbstractVerificationProvider provider) {
             this.deny = Preconditions.checkNotNull(deny);
+            this.pattern = pattern;
             this.provider = Preconditions.checkNotNull(provider);
+        }
+
+        public boolean reject(final String e164) {
+            return pattern != null && !pattern.matcher(e164).matches();
         }
     }
 }
