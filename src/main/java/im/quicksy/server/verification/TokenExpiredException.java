@@ -6,7 +6,7 @@ public class TokenExpiredException extends RequestFailedException {
     }
 
     public TokenExpiredException(String message) {
-        super(message,0);
+        super(message, 0);
     }
 
     public TokenExpiredException(Exception e) {

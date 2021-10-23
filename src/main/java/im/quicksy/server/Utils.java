@@ -31,6 +31,10 @@ public class Utils {
     }
 
     public static Jid jidOf(Phonenumber.PhoneNumber phoneNumber) {
-        return Jid.of(PhoneNumberUtil.getInstance().format(phoneNumber,PhoneNumberUtil.PhoneNumberFormat.E164), Configuration.getInstance().getDomain(),null);
+        return Jid.of(
+                PhoneNumberUtil.getInstance()
+                        .format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.E164),
+                Configuration.getInstance().getDomain(),
+                null);
     }
 }

@@ -20,7 +20,7 @@ public class RequestFailedException extends Exception {
     private int code;
 
     public RequestFailedException(String message, Throwable throwable) {
-        super(message,throwable);
+        super(message, throwable);
     }
 
     public RequestFailedException(Throwable throwable) {

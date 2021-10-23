@@ -17,33 +17,34 @@
 package im.quicksy.server.xmpp.synchronization;
 
 import im.quicksy.server.controller.BaseController;
-
-import javax.xml.bind.annotation.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.xml.bind.annotation.*;
 
 @XmlRootElement(name = "phone-book", namespace = PhoneBook.NAMESPACE)
 public class PhoneBook {
 
     public static final String NAMESPACE = "im.quicksy.synchronization:0";
 
-    @XmlAttribute
-    private String ver;
+    @XmlAttribute private String ver;
 
-    @XmlElement(name="entry")
+    @XmlElement(name = "entry")
     private List<Entry> entries;
 
-    private PhoneBook() {
-
-    }
+    private PhoneBook() {}
 
     public PhoneBook(List<Entry> entries) {
         this.entries = entries;
     }
 
     public List<String> getPhoneNumbers() {
-        return entries == null ? Collections.emptyList() : entries.stream().map(Entry::getNumber).filter(n -> BaseController.E164_PATTERN.matcher(n).matches()).collect(Collectors.toList());
+        return entries == null
+                ? Collections.emptyList()
+                : entries.stream()
+                        .map(Entry::getNumber)
+                        .filter(n -> BaseController.E164_PATTERN.matcher(n).matches())
+                        .collect(Collectors.toList());
     }
 
     public String getVer() {

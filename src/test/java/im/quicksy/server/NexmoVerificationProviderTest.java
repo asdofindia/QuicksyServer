@@ -7,8 +7,7 @@ import org.junit.rules.ExpectedException;
 
 public class NexmoVerificationProviderTest {
 
-    @Rule
-    public final ExpectedException expectedException = ExpectedException.none();
+    @Rule public final ExpectedException expectedException = ExpectedException.none();
 
     @Test
     public void pinExpiry() {

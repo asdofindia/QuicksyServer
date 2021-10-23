@@ -26,7 +26,7 @@ public class VolumeLimiter<E, T> {
 
     private final Strategy strategy;
 
-    private final LinkedList<VolumeAttempt<E,T>> attempts = new LinkedList<>();
+    private final LinkedList<VolumeAttempt<E, T>> attempts = new LinkedList<>();
 
     public VolumeLimiter(Strategy strategy) {
         this.strategy = strategy;
@@ -39,18 +39,19 @@ public class VolumeLimiter<E, T> {
         }
 
         if (whats.size() > strategy.getAttempts()) {
-            throw new RetryInException(Duration.ZERO); //TODO should we throw a too large exception. because retry doesn’t really make sense
+            throw new RetryInException(
+                    Duration.ZERO); // TODO should we throw a too large exception. because retry
+            // doesn’t really make sense
         }
 
         List<T> remaining = new ArrayList<>(whats);
         final long now = System.nanoTime();
 
-
-        final Iterator<VolumeAttempt<E,T>> iterator = attempts.iterator();
+        final Iterator<VolumeAttempt<E, T>> iterator = attempts.iterator();
         int whatsCount = 0;
-        VolumeAttempt<E,T> firstAttempt = null;
+        VolumeAttempt<E, T> firstAttempt = null;
         while (iterator.hasNext()) {
-            VolumeAttempt<E,T> attempt = iterator.next();
+            VolumeAttempt<E, T> attempt = iterator.next();
             if (attempt.expired(now)) {
                 iterator.remove();
             } else {
@@ -67,7 +68,8 @@ public class VolumeLimiter<E, T> {
             }
         }
         if (whatsCount + remaining.size() > strategy.getAttempts()) {
-            throw new RetryInException(firstAttempt == null ? Duration.ZERO : firstAttempt.expiresIn(now));
+            throw new RetryInException(
+                    firstAttempt == null ? Duration.ZERO : firstAttempt.expiresIn(now));
         }
         attempts.push(new VolumeAttempt<>(who, remaining, strategy.getDuration().toNanos() + now));
     }
@@ -84,9 +86,7 @@ public class VolumeLimiter<E, T> {
         }
 
         public String getMessage() {
-            return "Retry in "+duration.toString();
+            return "Retry in " + duration.toString();
         }
-
     }
-
 }

@@ -43,5 +43,4 @@ public class Device {
         Device device = (Device) o;
         return Objects.equal(id, device.id);
     }
-
 }

@@ -17,10 +17,9 @@
 package im.quicksy.server.verification;
 
 import com.google.i18n.phonenumbers.Phonenumber;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Map;
 
 public class MockVerificationProvider extends AbstractVerificationProvider {
 
@@ -32,7 +31,9 @@ public class MockVerificationProvider extends AbstractVerificationProvider {
 
     @Override
     public boolean verify(Phonenumber.PhoneNumber phoneNumber, String pin) {
-        return pin != null && pin.length() == 6 && String.valueOf(phoneNumber.getNationalNumber()).startsWith(pin);
+        return pin != null
+                && pin.length() == 6
+                && String.valueOf(phoneNumber.getNationalNumber()).startsWith(pin);
     }
 
     @Override
@@ -42,6 +43,12 @@ public class MockVerificationProvider extends AbstractVerificationProvider {
 
     @Override
     public void request(Phonenumber.PhoneNumber phoneNumber, Method method, String language) {
-        LOGGER.info("sending verification SMS to "+phoneNumber+"("+method+") language="+language);
+        LOGGER.info(
+                "sending verification SMS to "
+                        + phoneNumber
+                        + "("
+                        + method
+                        + ") language="
+                        + language);
     }
 }

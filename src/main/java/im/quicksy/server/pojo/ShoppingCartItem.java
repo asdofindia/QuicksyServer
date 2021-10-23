@@ -33,5 +33,4 @@ public class ShoppingCartItem {
     public float getPrice() {
         return price;
     }
-
 }

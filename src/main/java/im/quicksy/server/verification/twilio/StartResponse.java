@@ -38,5 +38,4 @@ public class StartResponse extends GenericResponse {
     public String getUuid() {
         return uuid;
     }
-
 }

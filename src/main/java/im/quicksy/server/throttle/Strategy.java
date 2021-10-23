@@ -34,8 +34,7 @@ public class Strategy {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Strategy strategy = (Strategy) o;
-        return attempts == strategy.attempts &&
-                Objects.equals(duration, strategy.duration);
+        return attempts == strategy.attempts && Objects.equals(duration, strategy.duration);
     }
 
     @Override

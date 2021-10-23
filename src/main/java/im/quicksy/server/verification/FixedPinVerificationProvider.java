@@ -5,11 +5,10 @@ import com.google.common.base.Strings;
 import com.google.common.hash.Hashing;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.math.BigInteger;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FixedPinVerificationProvider extends AbstractVerificationProvider {
 

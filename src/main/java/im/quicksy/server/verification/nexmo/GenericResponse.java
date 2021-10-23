@@ -1,7 +1,6 @@
 package im.quicksy.server.verification.nexmo;
 
 import com.google.gson.annotations.SerializedName;
-
 import java.util.List;
 
 public class GenericResponse {
@@ -22,6 +21,7 @@ public class GenericResponse {
     public static class Message {
         private String to;
         private String status;
+
         @SerializedName("error-text")
         private String errorText;
 

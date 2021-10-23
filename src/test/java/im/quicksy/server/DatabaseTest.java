@@ -16,6 +16,8 @@
 
 package im.quicksy.server;
 
+import static junit.framework.TestCase.*;
+
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import im.quicksy.server.configuration.DatabaseConfiguration;
@@ -24,13 +26,9 @@ import im.quicksy.server.database.Database;
 import im.quicksy.server.pojo.Entry;
 import im.quicksy.server.pojo.Payment;
 import im.quicksy.server.pojo.PaymentMethod;
+import java.util.Collections;
 import org.junit.Test;
 import rocks.xmpp.addr.Jid;
-
-import java.util.Collections;
-import java.util.List;
-
-import static junit.framework.TestCase.*;
 
 public class DatabaseTest {
 
@@ -43,16 +41,14 @@ public class DatabaseTest {
     private static final DatabaseConfigurationBundle IN_MEMORY_DATABASE_CONFIGURATION;
 
     static {
-        IN_MEMORY_DATABASE_CONFIGURATION = new DatabaseConfigurationBundle.Builder()
-                .setEjabberdConfiguration(new DatabaseConfiguration.Builder()
-                        .setUrl(JDBC_URL)
-                        .build())
-                .setQuicksyConfiguration(new DatabaseConfiguration.Builder()
-                        .setUrl(JDBC_URL)
-                        .build())
-                .build();
+        IN_MEMORY_DATABASE_CONFIGURATION =
+                new DatabaseConfigurationBundle.Builder()
+                        .setEjabberdConfiguration(
+                                new DatabaseConfiguration.Builder().setUrl(JDBC_URL).build())
+                        .setQuicksyConfiguration(
+                                new DatabaseConfiguration.Builder().setUrl(JDBC_URL).build())
+                        .build();
     }
-
 
     @Test
     public void makePaymentCreateEntityAndReadBack() {
@@ -76,10 +72,13 @@ public class DatabaseTest {
         final Entry entry = new Entry(TEST_USER);
         entry.setPhoneNumber(PhoneNumberUtil.getInstance().parse(TEST_PHONE_NUMBER, "us"));
         assertTrue(database.updatePaymentAndCreateEntry(payment, entry));
-        assertEquals(0, database.findDirectoryUsers(Collections.singletonList(TEST_PHONE_NUMBER)).size());
+        assertEquals(
+                0,
+                database.findDirectoryUsers(Collections.singletonList(TEST_PHONE_NUMBER)).size());
         entry.setVerified(true);
         database.updateEntry(entry);
-        assertEquals(1, database.findDirectoryUsers(Collections.singletonList(TEST_PHONE_NUMBER)).size());
+        assertEquals(
+                1,
+                database.findDirectoryUsers(Collections.singletonList(TEST_PHONE_NUMBER)).size());
     }
-
 }

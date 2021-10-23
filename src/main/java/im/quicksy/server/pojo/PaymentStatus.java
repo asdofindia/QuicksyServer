@@ -17,5 +17,6 @@
 package im.quicksy.server.pojo;
 
 public enum PaymentStatus {
-    PENDING, PAYED
+    PENDING,
+    PAYED
 }

@@ -29,5 +29,4 @@ public class MyEjabberdApi {
     public static Ejabberd getInstance() {
         return EJABBERD;
     }
-
 }

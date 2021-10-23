@@ -17,5 +17,7 @@
 package im.quicksy.server.pojo;
 
 public enum PaymentMethod {
-    PAYPAL, WIRE_TRANSFER, VOUCHER;
+    PAYPAL,
+    WIRE_TRANSFER,
+    VOUCHER;
 }

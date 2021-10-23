@@ -38,14 +38,15 @@ public class RateLimiter<T> {
         final long now = System.nanoTime();
         check(entity, now);
         for (Strategy strategy : strategies) {
-            storage.computeIfAbsent(strategy, k -> new LinkedList<>()).addLast(Attempt.create(entity, strategy.getDuration().toNanos() + now));
+            storage.computeIfAbsent(strategy, k -> new LinkedList<>())
+                    .addLast(Attempt.create(entity, strategy.getDuration().toNanos() + now));
         }
-
     }
 
     private void check(T entity, final long now) throws RetryInException {
         for (Strategy strategy : strategies) {
-            final LinkedList<Attempt<T>> list = storage.computeIfAbsent(strategy, k -> new LinkedList<>());
+            final LinkedList<Attempt<T>> list =
+                    storage.computeIfAbsent(strategy, k -> new LinkedList<>());
             final Iterator<Attempt<T>> iterator = list.iterator();
             int entityCount = 0;
             Attempt<T> firstAttempt = null;
@@ -65,7 +66,6 @@ public class RateLimiter<T> {
                     }
                 }
             }
-
         }
     }
 
@@ -88,8 +88,12 @@ public class RateLimiter<T> {
 
         @Override
         public String getMessage() {
-            return "Throttled "+getEntityType()+"("+this.object.toString()+"). Retry in "+duration.toString();
+            return "Throttled "
+                    + getEntityType()
+                    + "("
+                    + this.object.toString()
+                    + "). Retry in "
+                    + duration.toString();
         }
     }
-
 }

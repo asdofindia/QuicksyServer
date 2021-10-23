@@ -17,29 +17,25 @@
 package im.quicksy.server.xmpp.synchronization;
 
 import com.google.common.io.BaseEncoding;
-import rocks.xmpp.addr.Jid;
-
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import rocks.xmpp.addr.Jid;
 
 @XmlRootElement
 public class Entry implements Comparable<Entry> {
 
-    @XmlAttribute
-    private String number;
+    @XmlAttribute private String number;
 
-    @XmlElement(name="jid", namespace = PhoneBook.NAMESPACE)
+    @XmlElement(name = "jid", namespace = PhoneBook.NAMESPACE)
     private List<Jid> jids;
 
-    private Entry() {
-
-    }
+    private Entry() {}
 
     public Entry(String number) {
         this.number = number;
@@ -62,14 +58,14 @@ public class Entry implements Comparable<Entry> {
     public static String statusQuo(final List<Entry> entries) {
         Collections.sort(entries);
         StringBuilder builder = new StringBuilder();
-        for(Entry entry : entries) {
+        for (Entry entry : entries) {
             if (builder.length() != 0) {
                 builder.append('\u001d');
             }
             builder.append(entry.getNumber());
             List<Jid> jids = entry.getJids();
             Collections.sort(jids);
-            for(Jid jid : jids) {
+            for (Jid jid : jids) {
                 builder.append('\u001e');
                 builder.append(jid.asBareJid().toEscapedString());
             }

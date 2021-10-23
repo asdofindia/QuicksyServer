@@ -20,13 +20,12 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import im.quicksy.server.configuration.Configuration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.FileReader;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Voucher {
 
@@ -44,9 +43,12 @@ public class Voucher {
     public static boolean checkVoucher(String code) {
         try {
             final Gson gson = new GsonBuilder().create();
-            List<Voucher> vouchers = gson.fromJson(new FileReader(Configuration.getInstance().getVoucherFile()),new TypeToken<List<Voucher>>(){}.getType());
-            LOGGER.info(vouchers.size()+" vouchers on file");
-            for(Voucher voucher : vouchers) {
+            List<Voucher> vouchers =
+                    gson.fromJson(
+                            new FileReader(Configuration.getInstance().getVoucherFile()),
+                            new TypeToken<List<Voucher>>() {}.getType());
+            LOGGER.info(vouchers.size() + " vouchers on file");
+            for (Voucher voucher : vouchers) {
                 if (code.equals(voucher.code) && voucher.isCurrentlyValid()) {
                     return true;
                 }
@@ -57,5 +59,4 @@ public class Voucher {
             return false;
         }
     }
-
 }

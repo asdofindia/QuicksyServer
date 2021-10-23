@@ -21,9 +21,7 @@ public class DatabaseConfigurationBundle {
     private DatabaseConfiguration ejabberd;
     private DatabaseConfiguration quicksy;
 
-    private DatabaseConfigurationBundle() {
-
-    }
+    private DatabaseConfigurationBundle() {}
 
     public DatabaseConfiguration getEjabberdConfiguration() {
         return ejabberd;
@@ -32,7 +30,6 @@ public class DatabaseConfigurationBundle {
     public DatabaseConfiguration getQuicksyConfiguration() {
         return quicksy;
     }
-
 
     public static class Builder {
 
@@ -51,6 +48,5 @@ public class DatabaseConfigurationBundle {
         public DatabaseConfigurationBundle build() {
             return bundle;
         }
-
     }
 }

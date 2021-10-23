@@ -16,44 +16,44 @@
 
 package im.quicksy.server.controller;
 
+import static spark.Spark.halt;
+
 import com.github.zafarkhaja.semver.ParseException;
 import com.github.zafarkhaja.semver.Version;
 import com.google.common.base.Splitter;
 import com.google.common.net.InetAddresses;
 import im.quicksy.server.configuration.Configuration;
 import im.quicksy.server.verification.MetaVerificationProvider;
-import im.quicksy.server.verification.NexmoVerificationProvider;
-import im.quicksy.server.verification.TwilioVerificationProvider;
 import im.quicksy.server.verification.VerificationProvider;
+import java.net.InetAddress;
+import java.util.Collections;
+import java.util.List;
+import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.Filter;
 import spark.Request;
 import spark.Route;
 
-import java.net.InetAddress;
-import java.util.Collections;
-import java.util.List;
-import java.util.regex.Pattern;
-
-import static spark.Spark.halt;
-
 public class BaseController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseController.class);
 
-    public static Route index = (request, response) -> {
-        response.type("text/plain");
-        return "This is Quicksy Server";
-    };
+    public static Route index =
+            (request, response) -> {
+                response.type("text/plain");
+                return "This is Quicksy Server";
+            };
     protected static final String HEADER_X_REAL_IP = "X-Real-IP";
     protected static final String HEADER_AUTHORIZATION = "Authorization";
 
     public static Pattern E164_PATTERN = Pattern.compile("^\\+?[1-9]\\d{1,14}$");
     protected static Pattern PIN_PATTERN = Pattern.compile("^[0-9]{6}$");
-    protected static Pattern UUID_PATTERN = Pattern.compile("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$");
+    protected static Pattern UUID_PATTERN =
+            Pattern.compile("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$");
 
-    protected static final VerificationProvider VERIFICATION_PROVIDER = new MetaVerificationProvider();
+    protected static final VerificationProvider VERIFICATION_PROVIDER =
+            new MetaVerificationProvider();
 
     protected static InetAddress getClientIp(Request request) {
         final InetAddress remote = InetAddresses.forString(request.ip());
@@ -66,25 +66,33 @@ public class BaseController {
         return remote;
     }
 
-    public static Filter versionCheck = (request, response) -> {
-        final String userAgent = request.headers("User-Agent");
-        LOGGER.info("Running version check against "+userAgent);
-        final List<String> parts = userAgent == null ? Collections.emptyList() : Splitter.on('/').limit(2).splitToList(userAgent);
-        if (parts.size() == 2) {
-            try {
-                Version version = Version.valueOf(parts.get(1));
-                if (!"Quicksy".equals(parts.get(0)) || version.lessThan(Configuration.getInstance().getMinVersion())) {
-                    LOGGER.warn("Outdated client version detected ("+userAgent+")");
+    public static Filter versionCheck =
+            (request, response) -> {
+                final String userAgent = request.headers("User-Agent");
+                LOGGER.info("Running version check against " + userAgent);
+                final List<String> parts =
+                        userAgent == null
+                                ? Collections.emptyList()
+                                : Splitter.on('/').limit(2).splitToList(userAgent);
+                if (parts.size() == 2) {
+                    try {
+                        Version version = Version.valueOf(parts.get(1));
+                        if (!"Quicksy".equals(parts.get(0))
+                                || version.lessThan(Configuration.getInstance().getMinVersion())) {
+                            LOGGER.warn("Outdated client version detected (" + userAgent + ")");
+                            halt(403);
+                        }
+                    } catch (ParseException e) {
+                        LOGGER.warn(
+                                "Unable to parse client version from User-Agent ("
+                                        + userAgent
+                                        + ")");
+                        halt(403);
+                    }
+                } else {
+                    LOGGER.warn(
+                            "Unable to parse client version from User-Agent (" + userAgent + ")");
                     halt(403);
                 }
-            } catch (ParseException e) {
-                LOGGER.warn("Unable to parse client version from User-Agent ("+userAgent+")");
-                halt(403);
-            }
-        } else {
-            LOGGER.warn("Unable to parse client version from User-Agent ("+userAgent+")");
-            halt(403);
-        }
-    };
-
+            };
 }

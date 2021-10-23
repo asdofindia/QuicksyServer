@@ -22,12 +22,11 @@ public class CodeGenerator {
 
     private static final char[] VALID_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789".toCharArray();
 
-
     public static String generate(int length) {
         final SecureRandom random = new SecureRandom();
         StringBuilder builder = new StringBuilder();
-        for(int i = 0; i < length; ++i) {
-            builder.append(VALID_CHARS[random.nextInt(VALID_CHARS.length -1)]);
+        for (int i = 0; i < length; ++i) {
+            builder.append(VALID_CHARS[random.nextInt(VALID_CHARS.length - 1)]);
         }
         return builder.toString();
     }

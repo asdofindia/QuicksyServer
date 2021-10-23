@@ -16,10 +16,9 @@
 
 package im.quicksy.server.database;
 
+import java.util.UUID;
 import org.sql2o.converters.Converter;
 import org.sql2o.converters.ConverterException;
-
-import java.util.UUID;
 
 public class UUIDStringConverter implements Converter<UUID> {
     @Override
@@ -33,7 +32,8 @@ public class UUIDStringConverter implements Converter<UUID> {
                 throw new ConverterException("uuid string is not properly formatted");
             }
         } else {
-            throw new ConverterException("can not convert object of type " + o.getClass().getName() + " to UUID");
+            throw new ConverterException(
+                    "can not convert object of type " + o.getClass().getName() + " to UUID");
         }
     }
 

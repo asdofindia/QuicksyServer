@@ -46,6 +46,4 @@ public class VolumeAttempt<E, T> {
     public List<T> getWhats() {
         return whats;
     }
-
-
 }

@@ -16,10 +16,14 @@
 
 package im.quicksy.server;
 
+import static spark.Spark.*;
+
 import im.quicksy.server.configuration.Configuration;
 import im.quicksy.server.controller.*;
 import im.quicksy.server.xmpp.synchronization.Entry;
 import im.quicksy.server.xmpp.synchronization.PhoneBook;
+import java.io.FileNotFoundException;
+import java.util.Properties;
 import org.apache.commons.cli.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,11 +39,6 @@ import rocks.xmpp.extensions.muc.model.Muc;
 import spark.TemplateEngine;
 import spark.template.freemarker.FreeMarkerEngine;
 import sun.misc.Signal;
-
-import java.io.FileNotFoundException;
-import java.util.Properties;
-
-import static spark.Spark.*;
 
 public class Main {
 
@@ -92,22 +91,23 @@ public class Main {
             properties.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "debug");
         }
 
-        Signal.handle(new Signal("HUP"), signal -> {
-            try {
-                if (Configuration.reload()) {
-                    LOGGER.info("reloaded config");
-                    logConfigurationInfo();
-                } else {
-                    LOGGER.error("unable to reload config. config file has moved");
-                }
-            } catch (RuntimeException e) {
-                LOGGER.error("Unable to load config file - " + e.getMessage());
-            }
-        });
+        Signal.handle(
+                new Signal("HUP"),
+                signal -> {
+                    try {
+                        if (Configuration.reload()) {
+                            LOGGER.info("reloaded config");
+                            logConfigurationInfo();
+                        } else {
+                            LOGGER.error("unable to reload config. config file has moved");
+                        }
+                    } catch (RuntimeException e) {
+                        LOGGER.error("Unable to load config file - " + e.getMessage());
+                    }
+                });
 
         setupWebServer();
         setupXmppComponent(commandLine.hasOption("x"));
-
     }
 
     private static void printHelp() {
@@ -116,10 +116,18 @@ public class Main {
     }
 
     private static void logConfigurationInfo() {
-        LOGGER.info("validating phone numbers: " + Boolean.toString(Configuration.getInstance().isValidatePhoneNumbers()));
-        LOGGER.info("prevent registration when logged in with another device: " + Boolean.toString(Configuration.getInstance().isPreventRegistration()));
-        LOGGER.info("minimum client version: " + Configuration.getInstance().getMinVersion().toString());
-        LOGGER.info("treat accounts as inactive after: " + Configuration.getInstance().getAccountInactivity());
+        LOGGER.info(
+                "validating phone numbers: "
+                        + Boolean.toString(Configuration.getInstance().isValidatePhoneNumbers()));
+        LOGGER.info(
+                "prevent registration when logged in with another device: "
+                        + Boolean.toString(Configuration.getInstance().isPreventRegistration()));
+        LOGGER.info(
+                "minimum client version: "
+                        + Configuration.getInstance().getMinVersion().toString());
+        LOGGER.info(
+                "treat accounts as inactive after: "
+                        + Configuration.getInstance().getAccountInactivity());
     }
 
     private static void setupWebServer() {
@@ -128,41 +136,55 @@ public class Main {
 
         final TemplateEngine templateEngine = new FreeMarkerEngine();
 
-        path("/api", () -> {
-            get("/", BaseController.index);
-            path("/password", () -> {
-                before("", BaseController.versionCheck);
-                before("", PasswordController.throttleIp);
-                post("", PasswordController.setPassword);
-            });
-            path("/authentication", () -> {
-                before("/*", BaseController.versionCheck);
-                before("/*", AuthenticationController.throttleIp);
-                get("/:phoneNumber", AuthenticationController.getAuthentication);
-            });
-        });
-        path("enter", () -> {
-            get("/", EnterController.intro, templateEngine);
-            get("/send-jabber-verification/", EnterController.getSendJabberVerification, templateEngine);
-            post("/send-jabber-verification/", EnterController.postSendJabberVerification);
-            get("/verify-jabber/", EnterController.getVerifyJabber, templateEngine);
-            post("/verify-jabber/", EnterController.postVerifyJabber);
-            get("/make-payment/", EnterController.getMakePayment, templateEngine);
-            get("/voucher/", EnterController.getVoucher, templateEngine);
-            post("/voucher/", EnterController.postVoucher);
-            get("/send-number-verification/", EnterController.getSendSmsVerification, templateEngine);
-            post("/send-number-verification/", EnterController.postSendSmsVerification);
-            get("/verify-number/", EnterController.getVerifyNumber, templateEngine);
-            post("/verify-number/", EnterController.postVerifyNumber);
-            get("/finished/", EnterController.getFinished, templateEngine);
-            get("/reset/", EnterController.getReset);
-            get("/confirm-reset/", EnterController.getConfirmReset, templateEngine);
-            get("/confirm-delete/", EnterController.getConfirmDelete, templateEngine);
-            get("/delete/", EnterController.getDelete, templateEngine);
-            post("/checkout/", EnterController.postCheckout);
-            get("/paypal/:status/:uuid/", EnterController.getPayPalResult);
-            get("/payment-received/", EnterController.getPaymentReceived, templateEngine);
-        });
+        path(
+                "/api",
+                () -> {
+                    get("/", BaseController.index);
+                    path(
+                            "/password",
+                            () -> {
+                                before("", BaseController.versionCheck);
+                                before("", PasswordController.throttleIp);
+                                post("", PasswordController.setPassword);
+                            });
+                    path(
+                            "/authentication",
+                            () -> {
+                                before("/*", BaseController.versionCheck);
+                                before("/*", AuthenticationController.throttleIp);
+                                get("/:phoneNumber", AuthenticationController.getAuthentication);
+                            });
+                });
+        path(
+                "enter",
+                () -> {
+                    get("/", EnterController.intro, templateEngine);
+                    get(
+                            "/send-jabber-verification/",
+                            EnterController.getSendJabberVerification,
+                            templateEngine);
+                    post("/send-jabber-verification/", EnterController.postSendJabberVerification);
+                    get("/verify-jabber/", EnterController.getVerifyJabber, templateEngine);
+                    post("/verify-jabber/", EnterController.postVerifyJabber);
+                    get("/make-payment/", EnterController.getMakePayment, templateEngine);
+                    get("/voucher/", EnterController.getVoucher, templateEngine);
+                    post("/voucher/", EnterController.postVoucher);
+                    get(
+                            "/send-number-verification/",
+                            EnterController.getSendSmsVerification,
+                            templateEngine);
+                    post("/send-number-verification/", EnterController.postSendSmsVerification);
+                    get("/verify-number/", EnterController.getVerifyNumber, templateEngine);
+                    post("/verify-number/", EnterController.postVerifyNumber);
+                    get("/finished/", EnterController.getFinished, templateEngine);
+                    get("/reset/", EnterController.getReset);
+                    get("/confirm-reset/", EnterController.getConfirmReset, templateEngine);
+                    get("/confirm-delete/", EnterController.getConfirmDelete, templateEngine);
+                    get("/delete/", EnterController.getDelete, templateEngine);
+                    post("/checkout/", EnterController.postCheckout);
+                    get("/paypal/:status/:uuid/", EnterController.getPayPalResult);
+                    get("/payment-received/", EnterController.getPaymentReceived, templateEngine);
+                });
     }
 
     private static void setupXmppComponent(final boolean debug) {
@@ -173,21 +195,23 @@ public class Main {
 
         builder.extensions(Extension.of(Entry.class, PhoneBook.class));
 
-        final ExternalComponent externalComponent = ExternalComponent.create(
-                Configuration.getInstance().getXmpp().getJid().toEscapedString(),
-                Configuration.getInstance().getXmpp().getSecret(),
-                builder.build(),
-                Configuration.getInstance().getXmpp().getHost(),
-                Configuration.getInstance().getXmpp().getPort()
-        );
+        final ExternalComponent externalComponent =
+                ExternalComponent.create(
+                        Configuration.getInstance().getXmpp().getJid().toEscapedString(),
+                        Configuration.getInstance().getXmpp().getSecret(),
+                        builder.build(),
+                        Configuration.getInstance().getXmpp().getHost(),
+                        Configuration.getInstance().getXmpp().getPort());
 
-        ServiceDiscoveryManager serviceDiscoveryManager = externalComponent.getManager(ServiceDiscoveryManager.class);
+        ServiceDiscoveryManager serviceDiscoveryManager =
+                externalComponent.getManager(ServiceDiscoveryManager.class);
         serviceDiscoveryManager.addFeature(PhoneBook.NAMESPACE);
         serviceDiscoveryManager.addIdentity(Identity.storeGeneric());
         externalComponent.disableFeature(Muc.NAMESPACE);
         externalComponent.disableFeature(Socks5ByteStream.NAMESPACE);
 
-        externalComponent.addIQHandler(PhoneBook.class, SynchronizationController.synchronize, true);
+        externalComponent.addIQHandler(
+                PhoneBook.class, SynchronizationController.synchronize, true);
         connectAndKeepRetrying(externalComponent);
     }
 
@@ -204,5 +228,4 @@ public class Main {
             Utils.sleep(RETRY_INTERVAL);
         }
     }
-
 }

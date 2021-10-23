@@ -16,11 +16,10 @@
 
 package im.quicksy.server.database;
 
-import org.sql2o.converters.Converter;
-import org.sql2o.converters.ConverterException;
-
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import org.sql2o.converters.Converter;
+import org.sql2o.converters.ConverterException;
 
 public class LocalDateTimeConverter implements Converter<LocalDateTime> {
 
@@ -29,7 +28,10 @@ public class LocalDateTimeConverter implements Converter<LocalDateTime> {
         if (o instanceof Timestamp) {
             return ((Timestamp) o).toLocalDateTime();
         } else {
-            throw new ConverterException("can not convert object of type " + o.getClass().getName() + " to LocalDateTime");
+            throw new ConverterException(
+                    "can not convert object of type "
+                            + o.getClass().getName()
+                            + " to LocalDateTime");
         }
     }
 

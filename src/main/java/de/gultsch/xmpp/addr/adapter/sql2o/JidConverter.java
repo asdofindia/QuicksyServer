@@ -17,7 +17,8 @@ public class JidConverter implements Converter<Jid> {
                 throw new ConverterException("Unable to convert " + o.toString(), e);
             }
         } else {
-            throw new ConverterException("can not convert object of type " + o.getClass().getName() + " to Jid");
+            throw new ConverterException(
+                    "can not convert object of type " + o.getClass().getName() + " to Jid");
         }
     }
 

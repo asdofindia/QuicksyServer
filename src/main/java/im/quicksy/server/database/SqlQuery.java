@@ -18,16 +18,29 @@ package im.quicksy.server.database;
 
 public final class SqlQuery {
 
-    static final String FIND_EXISTING_USERS = "select username from users where server_host=:host and username in(:users)";
-    static final String FIND_DICTIONARY_ENTRIES = "select jid,phoneNumber from entries where phoneNumber in(:phoneNumbers) and verified=1";
+    static final String FIND_EXISTING_USERS =
+            "select username from users where server_host=:host and username in(:users)";
+    static final String FIND_DICTIONARY_ENTRIES =
+            "select jid,phoneNumber from entries where phoneNumber in(:phoneNumbers) and"
+                    + " verified=1";
 
-    static final String GET_ENTRY = "SELECT jid,phoneNumber,verified,attempts FROM entries where jid=:jid limit 1";
-    static final String CREATE_ENTRY = "insert into entries(jid,phoneNumber,verified,attempts) values(:jid,:phoneNumber,:verified,:attempts)";
-    static final String UPDATE_ENTRY = "update entries set phoneNumber=:phoneNumber, verified=:verified, attempts=:attempts where jid=:jid";
+    static final String GET_ENTRY =
+            "SELECT jid,phoneNumber,verified,attempts FROM entries where jid=:jid limit 1";
+    static final String CREATE_ENTRY =
+            "insert into entries(jid,phoneNumber,verified,attempts)"
+                    + " values(:jid,:phoneNumber,:verified,:attempts)";
+    static final String UPDATE_ENTRY =
+            "update entries set phoneNumber=:phoneNumber, verified=:verified, attempts=:attempts"
+                    + " where jid=:jid";
     static final String DELETE_ENTRY = "delete from entries where jid=:jid limit 1";
 
-    static final String GET_PAYMENT = "select uuid,owner,method,token,total,status,created from payments where uuid=:uuid limit 1";
-    static final String CREATE_PAYMENT = "insert into payments(uuid,owner,method,token,total,status,created) values(:uuid,:owner,:method,:token,:total,:status,:created)";
-    static final String MAKE_PAYMENT = "update payments set token=:token,status=:status where uuid=:uuid and status=:expectedStatus";
-
+    static final String GET_PAYMENT =
+            "select uuid,owner,method,token,total,status,created from payments where uuid=:uuid"
+                    + " limit 1";
+    static final String CREATE_PAYMENT =
+            "insert into payments(uuid,owner,method,token,total,status,created)"
+                    + " values(:uuid,:owner,:method,:token,:total,:status,:created)";
+    static final String MAKE_PAYMENT =
+            "update payments set token=:token,status=:status where uuid=:uuid and"
+                    + " status=:expectedStatus";
 }

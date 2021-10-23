@@ -26,11 +26,11 @@ public interface VerificationProvider {
 
     void request(Phonenumber.PhoneNumber phoneNumber, Method method) throws RequestFailedException;
 
-    void request(Phonenumber.PhoneNumber phoneNumber, Method method, String language) throws RequestFailedException;
+    void request(Phonenumber.PhoneNumber phoneNumber, Method method, String language)
+            throws RequestFailedException;
 
     enum Method {
         SMS,
         CALL
     }
-
 }

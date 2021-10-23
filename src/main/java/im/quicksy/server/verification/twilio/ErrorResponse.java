@@ -26,5 +26,4 @@ public class ErrorResponse extends GenericResponse {
     public int getErrorCode() {
         return errorCode;
     }
-
 }

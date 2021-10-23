@@ -16,12 +16,11 @@
 
 package im.quicksy.server.pojo;
 
-import rocks.xmpp.addr.Jid;
-
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import rocks.xmpp.addr.Jid;
 
 public class Payment {
 
@@ -34,7 +33,6 @@ public class Payment {
     private String token;
     private PaymentStatus status;
     private LocalDateTime created;
-
 
     public Payment(Jid jid, PaymentMethod method) {
         this.uuid = UUID.randomUUID();

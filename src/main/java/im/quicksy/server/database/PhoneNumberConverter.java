@@ -19,10 +19,9 @@ package im.quicksy.server.database;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
+import java.util.regex.Pattern;
 import org.sql2o.converters.Converter;
 import org.sql2o.converters.ConverterException;
-
-import java.util.regex.Pattern;
 
 public class PhoneNumberConverter implements Converter<PhoneNumber> {
 
@@ -39,7 +38,7 @@ public class PhoneNumberConverter implements Converter<PhoneNumber> {
                 throw new ConverterException("String doesn't match e164 pattern");
             }
             try {
-                return PhoneNumberUtil.getInstance().parse(string,"us");
+                return PhoneNumberUtil.getInstance().parse(string, "us");
             } catch (NumberParseException e) {
                 throw new ConverterException(e.getMessage());
             }
@@ -50,6 +49,7 @@ public class PhoneNumberConverter implements Converter<PhoneNumber> {
 
     @Override
     public Object toDatabaseParam(PhoneNumber phoneNumber) {
-        return PhoneNumberUtil.getInstance().format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.E164);
+        return PhoneNumberUtil.getInstance()
+                .format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.E164);
     }
 }

@@ -21,7 +21,6 @@ import rocks.xmpp.addr.Jid;
 
 public class Entry {
 
-
     private static final int DEFAULT_ATTEMPTS = 3;
 
     private Jid jid;

@@ -16,7 +16,6 @@
 
 package im.quicksy.server.configuration;
 
-
 import com.github.zafarkhaja.semver.Version;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
@@ -26,14 +25,13 @@ import de.gultsch.xmpp.addr.adapter.Adapter;
 import im.quicksy.server.json.DurationDeserializer;
 import im.quicksy.server.json.PatternDeserializer;
 import im.quicksy.server.json.VersionDeserializer;
-import rocks.xmpp.addr.Jid;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.time.Duration;
 import java.util.*;
 import java.util.regex.Pattern;
+import rocks.xmpp.addr.Jid;
 
 public class Configuration {
 
@@ -54,13 +52,12 @@ public class Configuration {
     private boolean validatePhoneNumbers = true;
     private boolean preventRegistration = true;
 
-    private Configuration() {
+    private Configuration() {}
 
-    }
-
-    public synchronized static void setFilename(String filename) throws FileNotFoundException {
+    public static synchronized void setFilename(String filename) throws FileNotFoundException {
         if (INSTANCE != null) {
-            throw new IllegalStateException("Unable to set filename after instance has been created");
+            throw new IllegalStateException(
+                    "Unable to set filename after instance has been created");
         }
         Configuration.FILE = new File(filename);
         if (!Configuration.FILE.exists()) {
@@ -68,7 +65,7 @@ public class Configuration {
         }
     }
 
-    public synchronized static Configuration getInstance() {
+    public static synchronized Configuration getInstance() {
         if (INSTANCE == null) {
             INSTANCE = load();
         }
@@ -93,7 +90,7 @@ public class Configuration {
         }
     }
 
-    public synchronized static boolean reload() {
+    public static synchronized boolean reload() {
         if (Configuration.FILE.exists()) {
             final Configuration newConfig = load();
             if (!newConfig.check()) {
@@ -107,7 +104,15 @@ public class Configuration {
     }
 
     public boolean check() {
-        return domain != null && minVersion != null && web != null && xmpp != null && xmpp.check() && db != null && db.size() == 2 && payPal != null && payPal.check();
+        return domain != null
+                && minVersion != null
+                && web != null
+                && xmpp != null
+                && xmpp.check()
+                && db != null
+                && db.size() == 2
+                && payPal != null
+                && payPal.check();
     }
 
     public Duration getAccountInactivity() {
@@ -131,7 +136,10 @@ public class Configuration {
     }
 
     public DatabaseConfigurationBundle getDatabaseConfigurationBundle() {
-        return new DatabaseConfigurationBundle.Builder().setEjabberdConfiguration(db.get("ejabberd")).setQuicksyConfiguration(db.get("quicksy")).build();
+        return new DatabaseConfigurationBundle.Builder()
+                .setEjabberdConfiguration(db.get("ejabberd"))
+                .setQuicksyConfiguration(db.get("quicksy"))
+                .build();
     }
 
     public Optional<String> getCimAuthToken() {
@@ -219,7 +227,6 @@ public class Configuration {
             return username != null && password != null && signature != null;
         }
     }
-
 
     public static class ProviderConfiguration {
         private Map<String, String> parameter;

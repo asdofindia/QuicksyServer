@@ -23,9 +23,7 @@ public class DatabaseConfiguration {
     private String password;
     private int poolSize = 1;
 
-    private DatabaseConfiguration() {
-
-    }
+    private DatabaseConfiguration() {}
 
     public String getUsername() {
         return username;
