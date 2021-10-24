@@ -3,6 +3,7 @@ package im.quicksy.server.verification;
 import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
 import com.google.common.hash.Hashing;
+import com.google.common.util.concurrent.RateLimiter;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
 import java.math.BigInteger;
@@ -15,6 +16,9 @@ public class FixedPinVerificationProvider extends AbstractVerificationProvider {
     private static final Logger LOGGER =
             LoggerFactory.getLogger(FixedPinVerificationProvider.class);
 
+    @SuppressWarnings("UnstableApiUsage")
+    private final RateLimiter rateLimiter = RateLimiter.create(0.2);
+
     private final String salt;
 
     public FixedPinVerificationProvider(final Map<String, String> parameter) {
@@ -25,6 +29,7 @@ public class FixedPinVerificationProvider extends AbstractVerificationProvider {
     @Override
     public boolean verify(final Phonenumber.PhoneNumber phoneNumber, final String pin)
             throws RequestFailedException {
+        checkRateLimiter();
         final boolean verified = generatePin(phoneNumber).equals(pin);
         if (verified) {
             LOGGER.info("Pin for {} has been verified successfully", phoneNumber);
@@ -35,17 +40,11 @@ public class FixedPinVerificationProvider extends AbstractVerificationProvider {
         }
     }
 
-    @Override
-    public void request(final Phonenumber.PhoneNumber phoneNumber, final Method method)
-            throws RequestFailedException {
-        final String pin = generatePin(phoneNumber);
-        LOGGER.info("requesting pin for {}. Pin is going to be {}", phoneNumber, pin);
-    }
-
-    @Override
-    public void request(Phonenumber.PhoneNumber phoneNumber, Method method, String language)
-            throws RequestFailedException {
-        this.request(phoneNumber, method);
+    @SuppressWarnings("UnstableApiUsage")
+    private void checkRateLimiter() throws TokenExpiredException {
+        if (!rateLimiter.tryAcquire()) {
+            throw new TokenExpiredException("Rate limiter struck");
+        }
     }
 
     @SuppressWarnings("UnstableApiUsage")
@@ -64,5 +63,18 @@ public class FixedPinVerificationProvider extends AbstractVerificationProvider {
                                 .asBytes())
                 .toString()
                 .substring(0, 6);
+    }
+
+    @Override
+    public void request(final Phonenumber.PhoneNumber phoneNumber, final Method method)
+            throws RequestFailedException {
+        final String pin = generatePin(phoneNumber);
+        LOGGER.info("requesting pin for {}. Pin is going to be {}", phoneNumber, pin);
+    }
+
+    @Override
+    public void request(Phonenumber.PhoneNumber phoneNumber, Method method, String language)
+            throws RequestFailedException {
+        this.request(phoneNumber, method);
     }
 }
