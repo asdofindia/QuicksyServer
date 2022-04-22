@@ -38,7 +38,7 @@ The password will be transmitted in the body of the POST. Phone number and 6 dig
 #### Request Header
 
 * `Authorization`: E.164 formatted phone number and 6 digit PIN concatenated with null byte as delimiter and encoded with base64. `base64(phoneNumber + \0 + pin)`.
-* `User-Agent`: Formatted to `Name/Version` with version being formatted according to [Sementic Versioning](https://semver.org/).
+* `User-Agent`: Formatted to `Name/Version` with version being formatted according to [Semantic Versioning](https://semver.org/).
 
 #### Response codes
 
